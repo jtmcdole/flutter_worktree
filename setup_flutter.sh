@@ -6,8 +6,7 @@ ORIGIN_URL="git@github.com:jtmcdole/flutter.git"
 UPSTREAM_URL="https://github.com/flutter/flutter.git"
 
 # Specific refs
-REF_MASTER="master"
-REF_STABLE="stable" # stable candidate branch
+REF_STABLE="flutter-3.38-candidate.0" # stable candidate branch
 
 # echo "🚀 Starting Flutter Worktree Setup..."
 
@@ -41,12 +40,12 @@ cd ..
 
 # --- Setup MASTER ---
 echo "🌲 Creating 'master' worktree (tracking upstream/master)..."
-git worktree add master upstream/master
+git worktree add -B master master --track upstream/master
 
 # --- Setup STABLE ---
 echo "🌲 Creating 'stable' worktree (based on upstream/$REF_STABLE)..."
 # We create a local branch named 'stable' based on the upstream ref
-git worktree add stable upstream/"$REF_STABLE"
+git worktree add -B stable stable --track upstream/"$REF_STABLE"
 
 # 6. Pre-load Artifacts
 # We run --version to download the engine/dart-sdk for both immediately

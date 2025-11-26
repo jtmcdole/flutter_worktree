@@ -8,7 +8,7 @@ $OriginUrl     = "git@github.com:jtmcdole/flutter.git"
 $UpstreamUrl   = "https://github.com/flutter/flutter.git"
 
 # Specific refs
-$RefStable = "stable" 
+$RefStable = "flutter-3.38-candidate.0"
 
 Write-Host "🚀 Starting Flutter Worktree Setup (PS 7.5)..." -ForegroundColor Cyan
 
@@ -56,11 +56,11 @@ catch {
 }
 
 # Create new master worktree tracking upstream
-git worktree add -b master master upstream/master
+git worktree add -B master master --track upstream/master
 
 # --- Setup STABLE ---
 Write-Host "🌲 Creating 'stable' worktree (based on upstream/$RefStable)..." -ForegroundColor Green
-git worktree add -b stable stable upstream/"$RefStable"
+git worktree add -B stable stable --track upstream/"$RefStable"
 
 # 6. Pre-load Artifacts
 # Note: On Windows we must call flutter.bat
