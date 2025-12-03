@@ -61,11 +61,11 @@ cd ..
 
 # 7. Generate The Switcher Script
 echo "🔗 Generating context switcher..."
-local SWITCH_FILE="$ROOT_PATH/env_switch.sh" # Changed to local
+SWITCH_FILE="$ROOT_PATH/env_switch.sh"
 
 PAYLOAD="REPLACE_ME"
 echo "$PAYLOAD" | base64 --decode > "$SWITCH_FILE"
-chmod +x "$SWITCH_FILE" 
+chmod +x "$SWITCH_FILE"
 
 echo ""
 echo "✅ Setup Complete!"
