@@ -63,46 +63,9 @@ cd ..
 echo "🔗 Generating context switcher..."
 SWITCH_FILE="$ROOT_PATH/env_switch.sh"
 
-cat <<EOT > "$SWITCH_FILE"
-# Source this file in your .bashrc or .zshrc
-# Usage: source $SWITCH_FILE
-
-# Save the repo root for reference
-export FLUTTER_REPO_ROOT="$ROOT_PATH"
-
-fswitch() {
-    local target=\$1
-    local valid_targets=("master" "stable")
-
-    # 1. Validation
-    if [[ ! " \${valid_targets[@]} " =~ " \${target} " ]]; then
-        echo "❌ Invalid target: '\$target'"
-        echo "   Available contexts: master, stable"
-        return 1
-    fi
-
-    # 2. Clean PATH
-    # We remove any path containing the FLUTTER_REPO_ROOT to avoid conflicts
-    # This prevents having both 'master' and 'stable' in PATH at the same time
-    local new_path=\$(echo "\$PATH" | tr ':' '\n' | grep -v "\$FLUTTER_REPO_ROOT" | tr '\n' ':' | sed 's/:$//')
-
-    # 3. Update PATH
-    # Prepend the new target's bin directory
-    export PATH="\$FLUTTER_REPO_ROOT/\$target/bin:\$new_path"
-
-    # 4. Verify
-    echo "✅ Switched to Flutter \$target"
-    echo "   Flutter: \$(which flutter)"
-    echo "   Dart:    \$(which dart)"
-    flutter --version | head -n 1
-}
-
-# Optional: Default to stable on load if no flutter is found
-if ! command -v flutter &> /dev/null; then
-    fswitch stable # Uncomment to auto-load stable
-    echo "ℹ️  Flutter environment loaded. Use 'fswitch stable' or 'fswitch master' to activate."
-fi
-EOT
+PAYLOAD="IyBTb3VyY2UgdGhpcyBmaWxlIGluIHlvdXIgLmJhc2hyYyBvciAuenNocmMKIyBVc2FnZTogc291cmNlICRTV0lUQ0hfRklMRQoKIyBBdXRvLWRldGVjdCB0aGUgcmVwbyByb290IGJhc2VkIG9uIHRoaXMgc2NyaXB0J3MgbG9jYXRpb24KaWYgWyAtbiAiJEJBU0hfU09VUkNFIiBdOyB0aGVuCiAgICBfU0NSSVBUX1BBVEg9IiR7QkFTSF9TT1VSQ0VbMF19IgplbGlmIFsgLW4gIiRaU0hfVkVSU0lPTiIgXTsgdGhlbgogICAgX1NDUklQVF9QQVRIPSIkeyglKTotJXh9IgplbHNlCiAgICBfU0NSSVBUX1BBVEg9IiQwIgpmaQoKZXhwb3J0IEZMVVRURVJfUkVQT19ST09UPSIkKGNkICIkKGRpcm5hbWUgIiRfU0NSSVBUX1BBVEgiKSIgPi9kZXYvbnVsbCAyPiYxICYmIHB3ZCkiCgpfZnN3aXRjaF9nZXRfd29ya3RyZWVfZGF0YSgpIHsKICAgIGlmIGNvbW1hbmQgLXYgZ2l0ICY+IC9kZXYvbnVsbCAmJiBbIC1kICIkRkxVVFRFUl9SRVBPX1JPT1QiIF07IHRoZW4KICAgICAgICBnaXQgLUMgIiRGTFVUVEVSX1JFUE9fUk9PVCIgd29ya3RyZWUgbGlzdCAyPi9kZXYvbnVsbCB8IGdyZXAgLXYgIihiYXJlKSIKICAgIGZpCn0KCl9mc3dpdGNoX3Jlc29sdmUoKSB7CiAgICBsb2NhbCB0YXJnZXQ9JDEKICAgIGxvY2FsIHJlc29sdmVkPSIiCiAgICAKICAgIHdoaWxlIHJlYWQgLXIgcGF0aCBoYXNoIGJyYW5jaF9pbmZvIHJlc3Q7IGRvCiAgICAgICAgbG9jYWwgZGlyX25hbWU9IiR7cGF0aCMjKi99IgogICAgICAgIGxvY2FsIGJyYW5jaF9uYW1lPSIke2JyYW5jaF9pbmZvI1xbfSIKICAgICAgICBicmFuY2hfbmFtZT0iJHticmFuY2hfbmFtZSVcXX0iCiAgICAgICAgCiAgICAgICAgaWYgW1sgIiR0YXJnZXQiID09ICIkZGlyX25hbWUiIF1dIHx8IFtbICIkdGFyZ2V0IiA9PSAiJGJyYW5jaF9uYW1lIiBdXTsgdGhlbgogICAgICAgICAgICByZXNvbHZlZD0iJGRpcl9uYW1lIgogICAgICAgICAgICBicmVhawogICAgICAgIGZpCiAgICBkb25lIDwgPChfZnN3aXRjaF9nZXRfd29ya3RyZWVfZGF0YSkKICAgIAogICAgZWNobyAiJHJlc29sdmVkIgp9Cgpmc3dpdGNoKCkgewogICAgbG9jYWwgdGFyZ2V0PSQxCiAgICAKICAgICMgUmVzb2x2ZSB0YXJnZXQgdG8gZGlyZWN0b3J5CiAgICBsb2NhbCBkaXJfbmFtZT0kKF9mc3dpdGNoX3Jlc29sdmUgIiR0YXJnZXQiKQogICAgCiAgICBpZiBbWyAteiAiJGRpcl9uYW1lIiBdXTsgdGhlbgogICAgICAgIGVjaG8gIuKdjCBJbnZhbGlkIHRhcmdldDogJyR0YXJnZXQnIgogICAgICAgIGVjaG8gIiAgIEF2YWlsYWJsZSBjb250ZXh0czoiCiAgICAgICAgX2Zzd2l0Y2hfZ2V0X3dvcmt0cmVlX2RhdGEgfCB3aGlsZSByZWFkIC1yIHBhdGggaGFzaCBicmFuY2hfaW5mbyByZXN0OyBkbwogICAgICAgICAgICAgbG9jYWwgZD0iJHtwYXRoIyMqL30iCiAgICAgICAgICAgICBsb2NhbCBiPSIke2JyYW5jaF9pbmZvI1xbfSIKICAgICAgICAgICAgIGI9IiR7YiVcXX0iCiAgICAgICAgICAgICBlY2hvICIgICAtICRkICgkYikiCiAgICAgICAgZG9uZQogICAgICAgIHJldHVybiAxCiAgICBmaQoKICAgICMgMi4gQ2xlYW4gUEFUSAogICAgIyBXZSByZW1vdmUgYW55IHBhdGggY29udGFpbmluZyB0aGUgRkxVVFRFUl9SRVBPX1JPT1QgdG8gYXZvaWQgY29uZmxpY3RzCiAgICAjIFRoaXMgcHJldmVudHMgaGF2aW5nIGJvdGggJ21hc3RlcicgYW5kICdzdGFibGUnIGluIFBBVEggYXQgdGhlIHNhbWUgdGltZQogICAgbG9jYWwgbmV3X3BhdGg9JChlY2hvICIkUEFUSCIgfCB0ciAnOicgJ1xuJyB8IGdyZXAgLXYgIiRGTFVUVEVSX1JFUE9fUk9PVCIgfCB0ciAnXG4nICc6JyB8IHNlZCAncy86JC8vJykKCiAgICAjIDMuIFVwZGF0ZSBQQVRICiAgICAjIFByZXBlbmQgdGhlIG5ldyB0YXJnZXQncyBiaW4gZGlyZWN0b3J5CiAgICBleHBvcnQgUEFUSD0iJEZMVVRURVJfUkVQT19ST09ULyRkaXJfbmFtZS9iaW46JG5ld19wYXRoIgoKICAgICMgNC4gVmVyaWZ5CiAgICBlY2hvICLinIUgU3dpdGNoZWQgdG8gRmx1dHRlciAkZGlyX25hbWUiCiAgICBlY2hvICIgICBGbHV0dGVyOiAkKHdoaWNoIGZsdXR0ZXIpIgogICAgZWNobyAiICAgRGFydDogICAgJCh3aGljaCBkYXJ0KSIKICAgIGZsdXR0ZXIgLS12ZXJzaW9uIHwgaGVhZCAtbiAxCn0KCl9mc3dpdGNoX2NvbXBsZXRpb24oKSB7CiAgICBsb2NhbCBjdXI9IiR7Q09NUF9XT1JEU1tDT01QX0NXT1JEXX0iCiAgICBsb2NhbCB0YXJnZXRzPSgpCiAgICAKICAgIHdoaWxlIHJlYWQgLXIgcGF0aCBoYXNoIGJyYW5jaF9pbmZvIHJlc3Q7IGRvCiAgICAgICAgbG9jYWwgZGlyX25hbWU9IiR7cGF0aCMjKi99IgogICAgICAgIGxvY2FsIGJyYW5jaF9uYW1lPSIke2JyYW5jaF9pbmZvI1xbfSIKICAgICAgICBicmFuY2hfbmFtZT0iJHticmFuY2hfbmFtZSVcXX0iCiAgICAgICAgCiAgICAgICAgdGFyZ2V0cys9KCIkZGlyX25hbWUiKQogICAgICAgIGlmIFsgLW4gIiRicmFuY2hfbmFtZSIgXTsgdGhlbgogICAgICAgICAgICB0YXJnZXRzKz0oIiRicmFuY2hfbmFtZSIpCiAgICAgICAgZmkKICAgIGRvbmUgPCA8KF9mc3dpdGNoX2dldF93b3JrdHJlZV9kYXRhKQogICAgCiAgICAjIERlZHVwbGljYXRlIGFuZCBnZW5lcmF0ZSBjb21wbGV0aW9uCiAgICBsb2NhbCB1bmlxdWVfdGFyZ2V0cz0kKGVjaG8gIiR7dGFyZ2V0c1tAXX0iIHwgdHIgJyAnICdcbicgfCBzb3J0IC11IHwgdHIgJ1xuJyAnICcpCiAgICBDT01QUkVQTFk9KCAkKGNvbXBnZW4gLVcgIiR7dW5pcXVlX3RhcmdldHN9IiAtLSAke2N1cn0pICkKfQpjb21wbGV0ZSAtRiBfZnN3aXRjaF9jb21wbGV0aW9uIGZzd2l0Y2gKCiMgT3B0aW9uYWw6IERlZmF1bHQgdG8gc3RhYmxlIG9uIGxvYWQgaWYgbm8gZmx1dHRlciBpcyBmb3VuZAppZiAhIGNvbW1hbmQgLXYgZmx1dHRlciAmPiAvZGV2L251bGw7IHRoZW4KICAgIGZzd2l0Y2ggc3RhYmxlICMgVW5jb21tZW50IHRvIGF1dG8tbG9hZCBzdGFibGUKICAgIGVjaG8gIuKEue+4jyAgRmx1dHRlciBlbnZpcm9ubWVudCBsb2FkZWQuIFVzZSAnZnN3aXRjaCBzdGFibGUnIG9yICdmc3dpdGNoIG1hc3RlcicgdG8gYWN0aXZhdGUuIgpmaQo="
+echo "$PAYLOAD" | base64 --decode > "$SWITCH_FILE"
+chmod +x "$SWITCH_FILE"
 
 echo ""
 echo "✅ Setup Complete!"
