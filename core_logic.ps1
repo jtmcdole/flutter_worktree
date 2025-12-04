@@ -139,6 +139,13 @@ function fswitch {
     # 3. Verify
     Write-Host "✅ Switched to Flutter $resolvedDir" -ForegroundColor Green
 
+    # Output Flutter and Dart paths for verification, similar to core_logic.sh
+    $flutterPath = (Get-Command flutter -ErrorAction SilentlyContinue).Source
+    $dartPath = (Get-Command dart -ErrorAction SilentlyContinue).Source
+
+    Write-Host "   Flutter: $flutterPath"
+    Write-Host "   Dart:    $dartPath"
+
     # Run the binary directly to confirm the correct version
     $directBin = Join-Path $newBin "flutter"
     if ($IsWindows) {
