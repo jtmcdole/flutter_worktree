@@ -4,7 +4,7 @@ set -e
 # --- Bash Script Hydration ---
 CORE_LOGIC_FILE_SH="core_logic.sh"
 TEMPLATE_FILE_SH="setup_flutter.template.sh"
-OUTPUT_FILE_SH="setup_flutter.sh"
+OUTPUT_FILE_SH="dist/setup_flutter.sh"
 
 if [ ! -f "$CORE_LOGIC_FILE_SH" ]; then
     echo "❌ Error: '$CORE_LOGIC_FILE_SH' not found. Aborting bash hydration."
@@ -29,7 +29,7 @@ echo "✅ Successfully hydrated '$OUTPUT_FILE_SH' with content from '$CORE_LOGIC
 # --- PowerShell Script Hydration ---
 CORE_LOGIC_FILE_PS="core_logic.ps1"
 TEMPLATE_FILE_PS="setup_flutter.template.ps1"
-OUTPUT_FILE_PS="setup_flutter.ps1"
+OUTPUT_FILE_PS="dist/setup_flutter.ps1"
 
 if [ ! -f "$CORE_LOGIC_FILE_PS" ]; then
     echo "❌ Error: '$CORE_LOGIC_FILE_PS' not found. Aborting PowerShell hydration."
