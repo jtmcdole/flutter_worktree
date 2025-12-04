@@ -96,8 +96,8 @@ function fswitch {
         $sepChar = ':'
     }
 
-    if ($null -ne $env:Path) {
-        $currentPath = $env:Path.Split($sepChar, [System.StringSplitOptions]::RemoveEmptyEntries)
+    if ($null -ne $env:PATH) {
+        $currentPath = $env:PATH.Split($sepChar, [System.StringSplitOptions]::RemoveEmptyEntries)
     }
     else {
         $currentPath = @()
@@ -132,10 +132,10 @@ function fswitch {
     }
 
     if ($cleanPath.Count -gt 0) {
-        $env:Path = "$newBin$sepChar" + ($cleanPath -join $sepChar)
+        $env:PATH = "$newBin$sepChar" + ($cleanPath -join $sepChar)
     }
     else {
-        $env:Path = "$newBin"
+        $env:PATH = "$newBin"
     }
 
 
