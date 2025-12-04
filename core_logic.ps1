@@ -37,7 +37,9 @@ function Get-FlutterWorktrees {
                 }
             }
         }
-        catch { }
+        catch {
+            Write-Warning "Could not execute 'git worktree list'. Ensure git is installed and in your PATH."
+        }
     }
 }
 
@@ -136,33 +138,35 @@ function fswitch {
         $env:Path = "$newBin"
     }
 
+
     # 3. Verify
     Write-Host "✅ Switched to Flutter $resolvedDir" -ForegroundColor Green
 
-    # Output Flutter and Dart paths for verification, similar to core_logic.sh
     $flutterPath = (Get-Command flutter -ErrorAction SilentlyContinue).Source
     $dartPath = (Get-Command dart -ErrorAction SilentlyContinue).Source
 
     Write-Host "   Flutter: $flutterPath"
     Write-Host "   Dart:    $dartPath"
 
-    # Run the binary directly to confirm the correct version
-    $directBin = Join-Path $newBin "flutter"
-    if ($IsWindows) {
-        $directBin += ".bat"
-    }
-
-    if (Test-Path $directBin) {
+    # Run flutter --version to confirm the PATH is set correctly
+    if ((Get-Command flutter -ErrorAction SilentlyContinue)) {
         $prevEncoding = [Console]::OutputEncoding
         [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
         try {
-            & "$directBin" --version | Select-Object -First 1
+            flutter --version | Select-Object -First 1
         }
         finally {
             [Console]::OutputEncoding = $prevEncoding
         }
     }
     else {
-        Write-Warning "   Binary NOT found at expected location: $directBin"
+        Write-Warning "   'flutter' command not found in the new PATH."
     }
+}
+
+# Optional: Default to a version on load if no flutter is found
+if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
+    # Switch to a sensible default, e.g. 'stable'.
+    # This matches the behavior of the .sh script.
+    fswitch stable
 }
