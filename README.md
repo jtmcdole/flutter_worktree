@@ -16,7 +16,7 @@ To get started, simply run the appropriate one-liner for your operating system. 
 **Bash / Zsh (Linux & macOS):**
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/your/repo/main/dist/setup_flutter.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jtmcdole/flutter_worktree/main/dist/setup_flutter.sh)"
 ```
 
 **PowerShell (Windows):**
