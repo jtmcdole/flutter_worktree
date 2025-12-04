@@ -4,7 +4,18 @@ $ErrorActionPreference = "Stop"
 $PSNativeCommandUseErrorActionPreference = $true
 
 # --- Configuration ---
-$OriginUrl     = "git@github.com:jtmcdole/flutter.git"
+# Check if OriginUrl is provided (e.g. via environment variable or parameter context)
+# If not, prompt the user interactively.
+if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
+    Write-Host "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)" -ForegroundColor Cyan
+    $OriginUrl = Read-Host "Origin URL"
+}
+
+if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
+    Write-Error "❌ Error: Origin URL is required. Aborting."
+    exit 1
+}
+
 $UpstreamUrl   = "https://github.com/flutter/flutter.git"
 
 # Specific refs

@@ -2,7 +2,18 @@
 set -e
 
 # --- Configuration ---
-ORIGIN_URL="git@github.com:jtmcdole/flutter.git"
+# Check if ORIGIN_URL is provided (e.g. via environment variable)
+# If not, prompt the user interactively.
+if [ -z "$ORIGIN_URL" ]; then
+    echo "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)"
+    read -r -p "Origin URL: " ORIGIN_URL
+fi
+
+if [ -z "$ORIGIN_URL" ]; then
+    echo "❌ Error: Origin URL is required. Aborting."
+    exit 1
+fi
+
 UPSTREAM_URL="https://github.com/flutter/flutter.git"
 
 # Specific refs
