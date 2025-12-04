@@ -19,7 +19,7 @@ if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
 $UpstreamUrl   = "https://github.com/flutter/flutter.git"
 
 # Specific refs
-$RefStable = "flutter-3.38-candidate.0"
+$RefStable = "stable"
 
 Write-Host "🚀 Starting Flutter Worktree Setup (PS 7.5)..." -ForegroundColor Cyan
 
@@ -70,16 +70,21 @@ catch {
 git worktree add -B master master --track upstream/master
 
 # --- Setup STABLE ---
-Write-Host "🌲 Creating 'stable' worktree (based on upstream/$RefStable)..." -ForegroundColor Green
-git worktree add -B stable stable --track upstream/"$RefStable"
+$setupStable = Read-Host "Do you want to setup the 'stable' worktree? (y/N)"
+if ($setupStable -match "^[yY]") {
+    Write-Host "🌲 Creating 'stable' worktree (based on upstream/$RefStable)..." -ForegroundColor Green
+    git worktree add -B stable stable --track upstream/"$RefStable"
+}
 
 # 6. Pre-load Artifacts
 # Determine correct flutter command based on OS for cross-platform compatibility
 $flutterCmd = if ($IsWindows) { ".\bin\flutter.bat" } else { "./bin/flutter" }
-Write-Host "🛠️  Hydrating 'stable' artifacts..." -ForegroundColor Magenta
-Set-Location stable
-& $flutterCmd --version | Out-Null
-Set-Location ..
+if ($setupStable -match "^[yY]") {
+    Write-Host "🛠️  Hydrating 'stable' artifacts..." -ForegroundColor Magenta
+    Set-Location stable
+    & $flutterCmd --version | Out-Null
+    Set-Location ..
+}
 
 Write-Host "🛠️  Hydrating 'master' artifacts..." -ForegroundColor Magenta
 Set-Location master

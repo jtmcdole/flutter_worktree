@@ -17,7 +17,7 @@ fi
 UPSTREAM_URL="https://github.com/flutter/flutter.git"
 
 # Specific refs
-REF_STABLE="flutter-3.38-candidate.0" # stable candidate branch
+REF_STABLE="stable"
 
 # echo "🚀 Starting Flutter Worktree Setup..."
 
@@ -54,16 +54,25 @@ echo "🌲 Creating 'master' worktree (tracking upstream/master)..."
 git worktree add -B master master --track upstream/master
 
 # --- Setup STABLE ---
-echo "🌲 Creating 'stable' worktree (based on upstream/$REF_STABLE)..."
-# We create a local branch named 'stable' based on the upstream ref
-git worktree add -B stable stable --track upstream/"$REF_STABLE"
+read -p "Do you want to setup the 'stable' worktree? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    SETUP_STABLE=true
+    echo "🌲 Creating 'stable' worktree (based on upstream/$REF_STABLE)..."
+    # We create a local branch named 'stable' based on the upstream ref
+    git worktree add -B stable stable --track upstream/"$REF_STABLE"
+else
+    SETUP_STABLE=false
+fi
 
 # 6. Pre-load Artifacts
 # We run --version to download the engine/dart-sdk for both immediately
-echo "🛠️  Hydrating 'stable' artifacts..."
-cd stable
-./bin/flutter --version > /dev/null
-cd ..
+if [ "$SETUP_STABLE" = true ]; then
+    echo "🛠️  Hydrating 'stable' artifacts..."
+    cd stable
+    ./bin/flutter --version > /dev/null
+    cd ..
+fi
 
 echo "🛠️  Hydrating 'master' artifacts..."
 cd master
