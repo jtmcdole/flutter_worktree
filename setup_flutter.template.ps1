@@ -4,7 +4,18 @@ $ErrorActionPreference = "Stop"
 $PSNativeCommandUseErrorActionPreference = $true
 
 # --- Configuration ---
-$OriginUrl     = "git@github.com:jtmcdole/flutter.git"
+# Check if OriginUrl is provided (e.g. via environment variable or parameter context)
+# If not, prompt the user interactively.
+if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
+    Write-Host "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)" -ForegroundColor Cyan
+    $OriginUrl = Read-Host "Origin URL"
+}
+
+if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
+    Write-Error "❌ Error: Origin URL is required. Aborting."
+    exit 1
+}
+
 $UpstreamUrl   = "https://github.com/flutter/flutter.git"
 
 # Specific refs
@@ -80,7 +91,7 @@ Write-Host "🔗 Generating context switcher..." -ForegroundColor Cyan
 $SwitchFile = Join-Path $RootPath "env_switch.ps1"
 
 $PAYLOAD = "REPLACE_ME"
-[System.Convert]::FromBase64String($PAYLOAD) | Set-Content -Path $SwitchFile -Encoding UTF8
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($PAYLOAD)) | Set-Content -Path $SwitchFile -Encoding UTF8
 
 Write-Host ""
 Write-Host "✅ Setup Complete!" -ForegroundColor Green
@@ -92,5 +103,7 @@ Write-Host ""
 Write-Host "Usage:"
 Write-Host "   PS> fswitch master   -> Activates master branch"
 Write-Host "   PS> fswitch stable   -> Activates stable branch"
+Write-Host ""
+Write-Host "Want to create a new worktree?"
+Write-Host "   PS> git worktree add my_feature"
 Write-Host "------------------------------------------------------"
-
