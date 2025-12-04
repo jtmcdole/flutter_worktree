@@ -166,7 +166,6 @@ function fswitch {
 
 # Optional: Default to a version on load if no flutter is found
 if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
-    # Switch to a sensible default, e.g. 'stable'.
-    # This matches the behavior of the .sh script.
-    fswitch stable
+    # Switch to master
+    fswitch master
 }

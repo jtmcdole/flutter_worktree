@@ -91,8 +91,8 @@ _fswitch_completion() {
 }
 complete -F _fswitch_completion fswitch
 
-# Optional: Default to stable on load if no flutter is found
+# Optional: Default to master on load if no flutter is found
 if ! command -v flutter &> /dev/null; then
-    fswitch stable # Uncomment to auto-load stable
+    fswitch master
     echo "ℹ️  Flutter environment loaded. Use 'fswitch stable' or 'fswitch master' to activate."
 fi
