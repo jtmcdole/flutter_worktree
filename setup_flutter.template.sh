@@ -72,7 +72,7 @@ echo "✅ Setup Complete!"
 echo "------------------------------------------------------"
 echo "📂 Root:      $ROOT_PATH"
 echo "👉 To enable the switcher, add this to your .zshrc / .bashrc:"
-echo "   source $SWITCH_FILE" > /dev/null 2>&1
+echo "   source $SWITCH_FILE > /dev/null 2>&1"
 echo ""
 echo "Usage:"
 echo "   $ fswitch master   -> Activates master branch"

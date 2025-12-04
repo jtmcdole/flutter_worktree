@@ -63,15 +63,16 @@ Write-Host "🌲 Creating 'stable' worktree (based on upstream/$RefStable)..." -
 git worktree add -B stable stable --track upstream/"$RefStable"
 
 # 6. Pre-load Artifacts
-# Note: On Windows we must call flutter.bat
+# Determine correct flutter command based on OS for cross-platform compatibility
+$flutterCmd = if ($IsWindows) { ".\bin\flutter.bat" } else { "./bin/flutter" }
 Write-Host "🛠️  Hydrating 'stable' artifacts..." -ForegroundColor Magenta
 Set-Location stable
-.\bin\flutter.bat --version | Out-Null
+& $flutterCmd --version | Out-Null
 Set-Location ..
 
 Write-Host "🛠️  Hydrating 'master' artifacts..." -ForegroundColor Magenta
 Set-Location master
-.\bin\flutter.bat --version | Out-Null
+& $flutterCmd --version | Out-Null
 Set-Location ..
 
 # 7. Generate The Switcher Script
