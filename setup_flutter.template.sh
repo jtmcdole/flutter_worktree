@@ -63,46 +63,9 @@ cd ..
 echo "🔗 Generating context switcher..."
 SWITCH_FILE="$ROOT_PATH/env_switch.sh"
 
-cat <<EOT > "$SWITCH_FILE"
-# Source this file in your .bashrc or .zshrc
-# Usage: source $SWITCH_FILE
-
-# Save the repo root for reference
-export FLUTTER_REPO_ROOT="$ROOT_PATH"
-
-fswitch() {
-    local target=\$1
-    local valid_targets=("master" "stable")
-
-    # 1. Validation
-    if [[ ! " \${valid_targets[@]} " =~ " \${target} " ]]; then
-        echo "❌ Invalid target: '\$target'"
-        echo "   Available contexts: master, stable"
-        return 1
-    fi
-
-    # 2. Clean PATH
-    # We remove any path containing the FLUTTER_REPO_ROOT to avoid conflicts
-    # This prevents having both 'master' and 'stable' in PATH at the same time
-    local new_path=\$(echo "\$PATH" | tr ':' '\n' | grep -v "\$FLUTTER_REPO_ROOT" | tr '\n' ':' | sed 's/:$//')
-
-    # 3. Update PATH
-    # Prepend the new target's bin directory
-    export PATH="\$FLUTTER_REPO_ROOT/\$target/bin:\$new_path"
-
-    # 4. Verify
-    echo "✅ Switched to Flutter \$target"
-    echo "   Flutter: \$(which flutter)"
-    echo "   Dart:    \$(which dart)"
-    flutter --version | head -n 1
-}
-
-# Optional: Default to stable on load if no flutter is found
-if ! command -v flutter &> /dev/null; then
-    fswitch stable # Uncomment to auto-load stable
-    echo "ℹ️  Flutter environment loaded. Use 'fswitch stable' or 'fswitch master' to activate."
-fi
-EOT
+PAYLOAD="REPLACE_ME"
+echo "$PAYLOAD" | base64 --decode > "$SWITCH_FILE"
+chmod +x "$SWITCH_FILE"
 
 echo ""
 echo "✅ Setup Complete!"

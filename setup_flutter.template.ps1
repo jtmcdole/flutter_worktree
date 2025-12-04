@@ -78,43 +78,8 @@ Set-Location ..
 Write-Host "🔗 Generating context switcher..." -ForegroundColor Cyan
 $SwitchFile = Join-Path $RootPath "env_switch.ps1"
 
-$ScriptContent = @"
-# Source this file in your PowerShell Profile
-# Usage: . "$SwitchFile"
-
-`$global:FlutterRepoRoot = "$RootPath"
-
-function fswitch {
-    param([string]`$target)
-    
-    `$validTargets = @("master", "stable")
-
-    if (`$target -notin `$validTargets) {
-        Write-Error "❌ Invalid target: '`$target'"
-        Write-Host "   Available contexts: master, stable"
-        return
-    }
-
-    # 1. Clean Path
-    # Split the path, filter out any entry containing the repo root
-    `$currentPath = `$env:Path -split ';'
-    `$cleanPath = `$currentPath | Where-Object { `$_ -notlike "*`$global:FlutterRepoRoot*" }
-
-    # 2. Update Path
-    # Prepend the new target bin directory
-    `$newBin = Join-Path `$global:FlutterRepoRoot `$target "bin"
-    `$env:Path = "`$newBin;\" + (`$cleanPath -join ';')
-
-    # 3. Verify
-    Write-Host "✅ Switched to Flutter `$target" -ForegroundColor Green
-    Write-Host "   Flutter: `$(Get-Command flutter | Select-Object -ExpandProperty Source)"
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-    flutter --version | Select-Object -First 1
-}
-"@
-
-# PS 7 defaults Set-Content to UTF-8 (No BOM), which is perfect.
-Set-Content -Path $SwitchFile -Value $ScriptContent
+$PAYLOAD = "REPLACE_ME"
+[System.Convert]::FromBase64String($PAYLOAD) | Set-Content -Path $SwitchFile -Encoding UTF8
 
 Write-Host ""
 Write-Host "✅ Setup Complete!" -ForegroundColor Green
@@ -127,3 +92,4 @@ Write-Host "Usage:"
 Write-Host "   PS> fswitch master   -> Activates master branch"
 Write-Host "   PS> fswitch stable   -> Activates stable branch"
 Write-Host "------------------------------------------------------"
+
