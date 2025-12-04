@@ -22,14 +22,14 @@ To get started, simply run the appropriate one-liner for your operating system. 
 **PowerShell (Windows):**
 
 ```powershell
-irm https://raw.githubusercontent.com/your/repo/main/dist/setup_flutter.ps1 | iex
+irm https://raw.githubusercontent.com/jtmcdole/flutter_worktree/main/dist/setup_flutter.ps1 | iex
 ```
 
 ## Directory Structure
 
 After running the setup script, your development folder will be organized as follows:
 
-```
+```shell
 ~/dev/flutter/                  <-- Root Container (Not a git repo itself)
 ├── .bare/                      <-- The actual Git history (Hidden, Bare Repo)
 ├── .git                        <-- Git pointer file (allows git commands in root)
@@ -41,8 +41,6 @@ After running the setup script, your development folder will be organized as fol
     ├── bin/
     └── packages/
 ```
-
-
 
 ## Use it
 

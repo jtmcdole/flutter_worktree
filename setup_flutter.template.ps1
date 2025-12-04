@@ -91,7 +91,7 @@ Write-Host "🔗 Generating context switcher..." -ForegroundColor Cyan
 $SwitchFile = Join-Path $RootPath "env_switch.ps1"
 
 $PAYLOAD = "REPLACE_ME"
-[System.Convert]::FromBase64String($PAYLOAD) | Set-Content -Path $SwitchFile -Encoding UTF8
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($PAYLOAD)) | Set-Content -Path $SwitchFile -Encoding UTF8
 
 Write-Host ""
 Write-Host "✅ Setup Complete!" -ForegroundColor Green
@@ -103,5 +103,7 @@ Write-Host ""
 Write-Host "Usage:"
 Write-Host "   PS> fswitch master   -> Activates master branch"
 Write-Host "   PS> fswitch stable   -> Activates stable branch"
+Write-Host ""
+Write-Host "Want to create a new worktree?"
+Write-Host "   PS> git worktree add my_feature"
 Write-Host "------------------------------------------------------"
-
