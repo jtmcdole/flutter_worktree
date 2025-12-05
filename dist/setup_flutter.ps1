@@ -7,6 +7,7 @@ $PSNativeCommandUseErrorActionPreference = $true
 # Check if OriginUrl is provided (e.g. via environment variable or parameter context)
 # If not, prompt the user interactively.
 if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
+    Write-Host "Don't have a fork yet? https://github.com/flutter/flutter/fork" -ForegroundColor Cyan
     Write-Host "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)" -ForegroundColor Cyan
     $OriginUrl = Read-Host "Origin URL"
 }

@@ -5,6 +5,7 @@ set -e
 # Check if ORIGIN_URL is provided (e.g. via environment variable)
 # If not, prompt the user interactively.
 if [ -z "$ORIGIN_URL" ]; then
+    echo "Don't have a fork yet? https://github.com/flutter/flutter/fork"
     echo "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)"
     read -r -p "Origin URL: " ORIGIN_URL
 fi
