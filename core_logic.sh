@@ -67,7 +67,6 @@ fswitch() {
     echo "✅ Switched to Flutter $dir_name"
     echo "   Flutter: $(which flutter)"
     echo "   Dart:    $(which dart)"
-    flutter --version | head -n 1
 }
 
 _fswitch_completion() {

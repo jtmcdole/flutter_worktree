@@ -17,7 +17,7 @@ if [ ! -f "$TEMPLATE_FILE_SH" ]; then
 fi
 
 # Base64 encode the bash core logic
-PAYLOAD_SH=$(base64 -w 0 "$CORE_LOGIC_FILE_SH")
+PAYLOAD_SH=$(cat "$CORE_LOGIC_FILE_SH" | base64 | tr -d '\n')
 
 # Use sed to replace the placeholder in the bash template
 sed "s|REPLACE_ME|$PAYLOAD_SH|" "$TEMPLATE_FILE_SH" > "$OUTPUT_FILE_SH"
@@ -42,7 +42,7 @@ if [ ! -f "$TEMPLATE_FILE_PS" ]; then
 fi
 
 # Base64 encode the PowerShell core logic
-PAYLOAD_PS=$(base64 -w 0 "$CORE_LOGIC_FILE_PS")
+PAYLOAD_PS=$(cat "$CORE_LOGIC_FILE_PS" | base64 | tr -d '\n')
 
 # Use sed to replace the placeholder in the PowerShell template
 sed "s|REPLACE_ME|$PAYLOAD_PS|" "$TEMPLATE_FILE_PS" > "$OUTPUT_FILE_PS"

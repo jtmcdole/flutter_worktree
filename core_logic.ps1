@@ -138,7 +138,6 @@ function fswitch {
         $env:PATH = "$newBin"
     }
 
-
     # 3. Verify
     Write-Host "✅ Switched to Flutter $resolvedDir" -ForegroundColor Green
 
@@ -147,21 +146,6 @@ function fswitch {
 
     Write-Host "   Flutter: $flutterPath"
     Write-Host "   Dart:    $dartPath"
-
-    # Run flutter --version to confirm the PATH is set correctly
-    if ((Get-Command flutter -ErrorAction SilentlyContinue)) {
-        $prevEncoding = [Console]::OutputEncoding
-        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-        try {
-            flutter --version | Select-Object -First 1
-        }
-        finally {
-            [Console]::OutputEncoding = $prevEncoding
-        }
-    }
-    else {
-        Write-Warning "   'flutter' command not found in the new PATH."
-    }
 }
 
 # Optional: Default to a version on load if no flutter is found
