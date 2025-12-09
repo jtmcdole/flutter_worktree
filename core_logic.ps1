@@ -21,15 +21,36 @@ function Get-FlutterWorktrees {
                     if ($_ -match '^(?<path>.*?)\s+[0-9a-f]+\s+(?<extra>.*)$') {
                         $fullPath = $matches['path']
                         $extra = $matches['extra']
-                        $dirName = Split-Path -Leaf $fullPath
-                        $branch = ""
+                        
+                        # Calculate DirName (Relative path or Leaf name)
+                        $dirName = ""
+                        # Normalize for comparison (Git output usually has forward slashes or matches system)
+                        # We use simple string operations. 
+                        # Assuming $global:FlutterRepoRoot is normalized to system separators by PSScriptRoot logic usually?
+                        # But git output might use forward slashes even on Windows.
+                        
+                        $normFull = $fullPath -replace '[\\/]', [System.IO.Path]::DirectorySeparatorChar
+                        $normRoot = $global:FlutterRepoRoot -replace '[\\/]', [System.IO.Path]::DirectorySeparatorChar
+                        
+                        if ($normFull -eq $normRoot) {
+                            $dirName = Split-Path -Leaf $normFull
+                        }
+                        elseif ($normFull.StartsWith($normRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+                            # Remove root prefix and leading slash
+                            $dirName = $normFull.Substring($normRoot.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar)
+                        }
+                        else {
+                            # Fallback
+                            $dirName = Split-Path -Leaf $normFull
+                        }
 
+                        $branch = ""
                         if ($extra -match '\[(?<br>.*?)\]') {
                             $branch = $matches['br']
                         }
 
                         [PSCustomObject]@{
-                            Path    = $fullPath
+                            Path    = $normFull
                             DirName = $dirName
                             Branch  = $branch
                         }
@@ -62,18 +83,18 @@ function fswitch {
     )
 
     $worktrees = Get-FlutterWorktrees
-    $resolvedDir = $null
+    $resolvedWt = $null
 
     if ($worktrees) {
         foreach ($wt in $worktrees) {
             if ($Target -eq $wt.DirName -or ($wt.Branch -and $Target -eq $wt.Branch)) {
-                $resolvedDir = $wt.DirName
+                $resolvedWt = $wt
                 break
             }
         }
     }
 
-    if ([string]::IsNullOrEmpty($resolvedDir)) {
+    if ($null -eq $resolvedWt) {
         Write-Error "❌ Invalid target: '$Target'"
         Write-Host "   Available contexts:"
         if ($worktrees) {
@@ -120,7 +141,13 @@ function fswitch {
     }
 
     # 2. Update Path
-    $newBin = Join-Path $global:FlutterRepoRoot $resolvedDir "bin"
+    # Use the FULL PATH from the resolved worktree
+    $newBin = Join-Path $resolvedWt.Path "bin"
+
+    if (-not (Test-Path $newBin -PathType Container)) {
+        Write-Error "❌ Error: Flutter bin directory not found at '$newBin'"
+        return
+    }
 
     if (-not $IsWindows) {
         $flutterBin = Join-Path $newBin "flutter"
@@ -139,7 +166,7 @@ function fswitch {
     }
 
     # 3. Verify
-    Write-Host "✅ Switched to Flutter $resolvedDir" -ForegroundColor Green
+    Write-Host "✅ Switched to Flutter $($resolvedWt.DirName)" -ForegroundColor Green
 
     $flutterPath = (Get-Command flutter -ErrorAction SilentlyContinue).Source
     $dartPath = (Get-Command dart -ErrorAction SilentlyContinue).Source
