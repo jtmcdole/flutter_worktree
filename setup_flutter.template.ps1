@@ -94,7 +94,7 @@ Set-Location ..
 
 # 7. Generate The Switcher Script
 Write-Host "🔗 Generating context switcher..." -ForegroundColor Cyan
-$SwitchFile = Join-Path $RootPath "env_switch.ps1"
+$SwitchFile = Join-Path $RootPath "fswitch.ps1"
 
 $PAYLOAD = "REPLACE_ME"
 [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($PAYLOAD)) | Set-Content -Path $SwitchFile -Encoding UTF8

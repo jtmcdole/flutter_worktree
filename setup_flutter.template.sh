@@ -82,7 +82,7 @@ cd ..
 
 # 7. Generate The Switcher Script
 echo "🔗 Generating context switcher..."
-SWITCH_FILE="$ROOT_PATH/env_switch.sh"
+SWITCH_FILE="$ROOT_PATH/fswitch.sh"
 
 PAYLOAD="REPLACE_ME"
 echo "$PAYLOAD" | base64 --decode > "$SWITCH_FILE"
