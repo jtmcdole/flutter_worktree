@@ -7,9 +7,13 @@ $PSNativeCommandUseErrorActionPreference = $true
 # Check if OriginUrl is provided (e.g. via environment variable or parameter context)
 # If not, prompt the user interactively.
 if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
-    Write-Host "Don't have a fork yet? https://github.com/flutter/flutter/fork" -ForegroundColor Cyan
-    Write-Host "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)" -ForegroundColor Cyan
-    $OriginUrl = Read-Host "Origin URL"
+    if (-not [string]::IsNullOrWhiteSpace($env:ORIGIN_URL)) {
+        $OriginUrl = $env:ORIGIN_URL.Trim()
+    } else {
+        Write-Host "Don't have a fork yet? https://github.com/flutter/flutter/fork" -ForegroundColor Cyan
+        Write-Host "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)" -ForegroundColor Cyan
+        $OriginUrl = Read-Host "Origin URL"
+    }
 }
 
 if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
@@ -35,6 +39,7 @@ $RootPath = Get-Location
 
 # 2. Clone Bare Repo
 Write-Host "📦 Cloning origin as bare repository..." -ForegroundColor Yellow
+Write-Host "   Origin: '$OriginUrl'" -ForegroundColor DarkGray
 git clone --bare "$OriginUrl" .bare
 
 # Create .git pointer (Ascii is safest for git, though PS7 UTF8NoBOM works too)
@@ -67,8 +72,17 @@ catch {
 git worktree add -B master master --track upstream/master
 
 # --- Setup STABLE ---
-$setupStable = Read-Host "Do you want to setup the 'stable' worktree? (y/N)"
-if ($setupStable -match "^[yY]") {
+if ([string]::IsNullOrWhiteSpace($setupStable)) {
+    if (-not [string]::IsNullOrWhiteSpace($env:SETUP_STABLE)) {
+        $setupStable = $env:SETUP_STABLE
+    } else {
+        $setupStable = Read-Host "Do you want to setup the 'stable' worktree? (y/N)"
+    }
+}
+
+if ($setupStable -match "^[yY]" -or $setupStable -eq "true" -or $setupStable -eq $true) {
+    # Normalize for later use
+    $setupStable = "y"
     Write-Host "🌲 Creating 'stable' worktree (based on upstream/$RefStable)..." -ForegroundColor Green
     git worktree add -B stable stable --track upstream/"$RefStable"
 }

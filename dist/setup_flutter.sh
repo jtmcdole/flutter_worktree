@@ -33,6 +33,8 @@ ROOT_PATH=$(pwd)
 
 # 2. Clone Bare Repo
 echo "📦 Cloning origin as bare repository..."
+echo "   Origin: '$OriginUrl'"
+
 git clone --bare "$ORIGIN_URL" .bare
 echo "gitdir: ./.bare" > .git
 
@@ -51,9 +53,17 @@ echo "🌲 Creating 'master' worktree (tracking upstream/master)..."
 git worktree add -B master master --track upstream/master
 
 # --- Setup STABLE ---
-read -p "Do you want to setup the 'stable' worktree? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if [ -z "$SETUP_STABLE" ]; then
+    read -p "Do you want to setup the 'stable' worktree? (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        SETUP_STABLE=true
+    else
+        SETUP_STABLE=false
+    fi
+fi
+
+if [ "$SETUP_STABLE" = true ] || [[ "$SETUP_STABLE" =~ ^[Yy] ]]; then
     SETUP_STABLE=true
     echo "🌲 Creating 'stable' worktree (based on upstream/$REF_STABLE)..."
     # We create a local branch named 'stable' based on the upstream ref
