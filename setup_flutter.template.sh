@@ -37,7 +37,6 @@ git clone --bare "$ORIGIN_URL" .bare
 echo "gitdir: ./.bare" > .git
 
 # 3. Configure Remotes
-cd .bare
 echo "⚙️  Configuring remotes..."
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git remote add upstream "$UPSTREAM_URL"
@@ -46,9 +45,6 @@ git config remote.upstream.fetch "+refs/heads/*:refs/remotes/upstream/*"
 # 4. Fetch tags / branches
 echo "⬇️  Fetching everything (--all --tags --prune)..."
 git fetch --all --tags --prune
-
-# 5. Create Worktrees
-cd ..
 
 # --- Setup MASTER ---
 echo "🌲 Creating 'master' worktree (tracking upstream/master)..."
@@ -66,7 +62,7 @@ else
     SETUP_STABLE=false
 fi
 
-# 6. Pre-load Artifacts
+# 5. Pre-load Artifacts
 # We run --version to download the engine/dart-sdk for both immediately
 if [ "$SETUP_STABLE" = true ]; then
     echo "🛠️  Hydrating 'stable' artifacts..."
@@ -80,7 +76,7 @@ cd master
 ./bin/flutter --version > /dev/null
 cd ..
 
-# 7. Generate The Switcher Script
+# 6. Generate The Switcher Script
 echo "🔗 Generating context switcher..."
 SWITCH_FILE="$ROOT_PATH/fswitch.sh"
 
