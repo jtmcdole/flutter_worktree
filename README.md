@@ -33,7 +33,7 @@ After running the setup script, your development folder will be organized as fol
 ~/dev/flutter/                  <-- Root Container (Not a git repo itself)
 ├── .bare/                      <-- The actual Git history (Hidden, Bare Repo)
 ├── .git                        <-- Git pointer file (allows git commands in root)
-├── env_switch.sh (or .ps1)     <-- Script to swap PATH variables
+├── fswitch.sh (or .ps1)        <-- Script to swap PATH variables
 ├── master/                     <-- Worktree: Bleeding edge (upstream/master)
 │   ├── bin/
 │   ├── packages/
