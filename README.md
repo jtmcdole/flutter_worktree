@@ -25,6 +25,27 @@ To get started, simply run the appropriate one-liner for your operating system. 
 irm https://raw.githubusercontent.com/jtmcdole/flutter_worktree/main/dist/setup_flutter.ps1 | iex
 ```
 
+## Unattended Installation
+
+You can automate the installation (avoiding interactive prompts) by setting environment variables before running the script.
+
+**Variables:**
+
+* `ORIGIN_URL`: Your Flutter fork URL.
+* `SETUP_STABLE`: Set to `true` (or `y`) to install the stable worktree, or `false` to skip it.
+
+**Bash Example:**
+
+```bash
+ORIGIN_URL="git@github.com:username/flutter.git" SETUP_STABLE="true" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jtmcdole/flutter_worktree/main/dist/setup_flutter.sh)"
+```
+
+**PowerShell Example:**
+
+```powershell
+& { $env:ORIGIN_URL = "git@github.com:username/flutter.git"; $env:SETUP_STABLE = "true"; irm https://raw.githubusercontent.com/jtmcdole/flutter_worktree/main/dist/setup_flutter.sh | iex }
+```
+
 ## Directory Structure
 
 After running the setup script, your development folder will be organized as follows:
