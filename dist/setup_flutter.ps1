@@ -41,7 +41,6 @@ git clone --bare "$OriginUrl" .bare
 Set-Content -Path .git -Value "gitdir: ./.bare" -Encoding Ascii
 
 # 3. Configure Remotes
-Set-Location .bare
 Write-Host "⚙️  Configuring remotes..." -ForegroundColor Yellow
 
 # Fix Origin and Add Upstream
@@ -52,9 +51,6 @@ git config remote.upstream.fetch "+refs/heads/*:refs/remotes/upstream/*"
 # 4. Fetch All
 Write-Host "⬇️  Fetching everything (--all --tags --prune)..." -ForegroundColor Yellow
 git fetch --all --tags --prune
-
-# 5. Create Worktrees
-Set-Location ..
 
 # --- Setup MASTER ---
 Write-Host "🌲 Creating 'master' worktree..." -ForegroundColor Green
@@ -77,7 +73,7 @@ if ($setupStable -match "^[yY]") {
     git worktree add -B stable stable --track upstream/"$RefStable"
 }
 
-# 6. Pre-load Artifacts
+# 5. Pre-load Artifacts
 # Determine correct flutter command based on OS for cross-platform compatibility
 $flutterCmd = if ($IsWindows) { ".\bin\flutter.bat" } else { "./bin/flutter" }
 if ($setupStable -match "^[yY]") {
@@ -92,7 +88,7 @@ Set-Location master
 & $flutterCmd --version | Out-Null
 Set-Location ..
 
-# 7. Generate The Switcher Script
+# 6. Generate The Switcher Script
 Write-Host "🔗 Generating context switcher..." -ForegroundColor Cyan
 $SwitchFile = Join-Path $RootPath "fswitch.ps1"
 
