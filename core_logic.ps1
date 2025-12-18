@@ -186,3 +186,4 @@ if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
     # Switch to master
     fswitch master
 }
+

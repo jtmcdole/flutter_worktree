@@ -9,7 +9,8 @@ $PSNativeCommandUseErrorActionPreference = $true
 if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
     if (-not [string]::IsNullOrWhiteSpace($env:ORIGIN_URL)) {
         $OriginUrl = $env:ORIGIN_URL.Trim()
-    } else {
+    }
+    else {
         Write-Host "Don't have a fork yet? https://github.com/flutter/flutter/fork" -ForegroundColor Cyan
         Write-Host "Please enter your Flutter fork URL (e.g. git@github.com:username/flutter.git)" -ForegroundColor Cyan
         $OriginUrl = Read-Host "Origin URL"
@@ -21,7 +22,7 @@ if ([string]::IsNullOrWhiteSpace($OriginUrl)) {
     exit 1
 }
 
-$UpstreamUrl   = "https://github.com/flutter/flutter.git"
+$UpstreamUrl = "https://github.com/flutter/flutter.git"
 
 # Specific refs
 $RefStable = "stable"
@@ -75,7 +76,8 @@ git worktree add -B master master --track upstream/master
 if ([string]::IsNullOrWhiteSpace($setupStable)) {
     if (-not [string]::IsNullOrWhiteSpace($env:SETUP_STABLE)) {
         $setupStable = $env:SETUP_STABLE
-    } else {
+    }
+    else {
         $setupStable = Read-Host "Do you want to setup the 'stable' worktree? (y/N)"
     }
 }
@@ -123,3 +125,4 @@ Write-Host ""
 Write-Host "Want to create a new worktree?"
 Write-Host "   PS> git worktree add my_feature"
 Write-Host "------------------------------------------------------"
+
