@@ -71,8 +71,11 @@ fswitch() {
     else
         # Target resolved, check bin
         local full_bin_path="$FLUTTER_REPO_ROOT/$dir_name/bin"
+        local et_bin_path="$FLUTTER_REPO_ROOT/$dir_name/engine/src/flutter/bin"
+
         if [[ "$dir_name" == "." ]]; then
             full_bin_path="$FLUTTER_REPO_ROOT/bin"
+            et_bin_path="$FLUTTER_REPO_ROOT/engine/src/flutter/bin"
         fi
     
         if [[ ! -d "$full_bin_path" ]]; then
@@ -87,8 +90,12 @@ fswitch() {
             local new_path=$(echo "$PATH" | tr ':' '\n' | grep -vF "$FLUTTER_REPO_ROOT" | tr '\n' ':' | sed 's/:$//')
         
             # 3. Update PATH
-            # Prepend the new target's bin directory
-            export PATH="$full_bin_path:$new_path"
+            # Prepend the new target's bin directory (and et path if it exists)
+            if [[ -d "$et_bin_path" ]]; then
+                export PATH="$full_bin_path:$et_bin_path:$new_path"
+            else
+                export PATH="$full_bin_path:$new_path"
+            fi
         
             # 4. Verify
             echo "✅ Switched to Flutter $dir_name"

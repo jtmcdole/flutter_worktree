@@ -1,0 +1,3 @@
+* text=auto
+core_logic.sh         text eol=lf
+dist/setup_flutter.sh text eol=lf

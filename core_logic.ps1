@@ -143,6 +143,7 @@ function fswitch {
     # 2. Update Path
     # Use the FULL PATH from the resolved worktree
     $newBin = Join-Path $resolvedWt.Path "bin"
+    $etBin = Join-Path $resolvedWt.Path "engine\src\flutter\bin"
 
     if (-not (Test-Path $newBin -PathType Container)) {
         Write-Error "❌ Error: Flutter bin directory not found at '$newBin'"
@@ -158,11 +159,16 @@ function fswitch {
         }
     }
 
+    $pathsToAdd = @($newBin)
+    if (Test-Path $etBin -PathType Container) {
+        $pathsToAdd += $etBin
+    }
+
     if ($cleanPath.Count -gt 0) {
-        $env:PATH = "$newBin$sepChar" + ($cleanPath -join $sepChar)
+        $env:PATH = ($pathsToAdd -join $sepChar) + $sepChar + ($cleanPath -join $sepChar)
     }
     else {
-        $env:PATH = "$newBin"
+        $env:PATH = ($pathsToAdd -join $sepChar)
     }
 
     # 3. Verify
@@ -180,3 +186,4 @@ if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
     # Switch to master
     fswitch master
 }
+
