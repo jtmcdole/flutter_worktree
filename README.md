@@ -43,7 +43,7 @@ ORIGIN_URL="git@github.com:username/flutter.git" SETUP_STABLE="true" /bin/bash -
 **PowerShell Example:**
 
 ```powershell
-& { $env:ORIGIN_URL = "git@github.com:username/flutter.git"; $env:SETUP_STABLE = "true"; irm https://raw.githubusercontent.com/jtmcdole/flutter_worktree/main/dist/setup_flutter.sh | iex }
+& { $env:ORIGIN_URL = "git@github.com:username/flutter.git"; $env:SETUP_STABLE = "true"; irm https://raw.githubusercontent.com/jtmcdole/flutter_worktree/main/dist/setup_flutter.ps1 | iex }
 ```
 
 ## Directory Structure
