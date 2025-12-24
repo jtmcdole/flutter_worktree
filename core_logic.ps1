@@ -181,6 +181,33 @@ function fswitch {
     Write-Host "   Dart:    $dartPath"
 }
 
+function fcd {
+    <#
+    .SYNOPSIS
+    Changes the current directory to the root of the active Flutter worktree.
+    #>
+    $flutterPath = Get-Command flutter -ErrorAction SilentlyContinue
+    if ($null -eq $flutterPath) {
+        Write-Error "❌ Flutter command not found. Run 'fswitch <target>' first."
+        return
+    }
+
+    # flutterPath.Source will be something like ...\flutter_repo\master\bin\flutter.bat
+    $binDir = Split-Path $flutterPath.Source -Parent
+
+    # We expect 'bin' to be the parent. Go one level up.
+    if ((Split-Path $binDir -Leaf) -eq "bin") {
+        $rootDir = Split-Path $binDir -Parent
+        Set-Location $rootDir
+    }
+    else {
+        # Fallback if structure is weird, though fswitch enforces bin
+        Set-Location $binDir
+    }
+}
+
+Set-Alias -Name froot -Value fcd
+
 # Optional: Default to a version on load if no flutter is found
 if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
     # Switch to master

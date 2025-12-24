@@ -24,7 +24,7 @@ _fswitch_resolve() {
         return
     fi
     local resolved=""
-    
+
     while read -r wt_path hash branch_info rest; do
         local rel_path="${wt_path#$FLUTTER_REPO_ROOT/}"
         local is_root=0
@@ -35,13 +35,13 @@ _fswitch_resolve() {
 
         local branch_name="${branch_info#\[}"
         branch_name="${branch_name%\]}"
-        
+
         if [[ "$target" == "$rel_path" ]] || [[ "$target" == "$branch_name" ]]; then
             resolved="$rel_path"
             break
         fi
     done < <(_fswitch_get_worktree_data)
-    
+
     echo "$resolved"
 }
 
@@ -51,10 +51,10 @@ fswitch() {
         echo "❌ Error: FLUTTER_REPO_ROOT is not set. Could not detect repo root."
         return 1
     fi
-    
+
     # Resolve target to directory (relative path from root, or ".")
     local dir_name=$(_fswitch_resolve "$target")
-    
+
     if [[ -z "$dir_name" ]]; then
         echo "❌ Invalid target: '$target'"
         echo "   Available contexts:"
@@ -77,7 +77,7 @@ fswitch() {
             full_bin_path="$FLUTTER_REPO_ROOT/bin"
             et_bin_path="$FLUTTER_REPO_ROOT/engine/src/flutter/bin"
         fi
-    
+
         if [[ ! -d "$full_bin_path" ]]; then
             echo "❌ Error: Flutter bin directory not found at:"
             echo "   $full_bin_path"
@@ -88,7 +88,7 @@ fswitch() {
             # This prevents having both 'master' and 'stable' in PATH at the same time
             # Use -F to ensure fixed string matching (no regex)
             local new_path=$(echo "$PATH" | tr ':' '\n' | grep -vF "$FLUTTER_REPO_ROOT" | tr '\n' ':' | sed 's/:$//')
-        
+
             # 3. Update PATH
             # Prepend the new target's bin directory (and et path if it exists)
             if [[ -d "$et_bin_path" ]]; then
@@ -96,7 +96,7 @@ fswitch() {
             else
                 export PATH="$full_bin_path:$new_path"
             fi
-        
+
             # 4. Verify
             echo "✅ Switched to Flutter $dir_name"
             echo "   Flutter: $(which flutter)"
@@ -108,7 +108,7 @@ fswitch() {
 _fswitch_completion() {
     local cur="${COMP_WORDS[COMP_CWORD]}"
     local targets=()
-    
+
     while read -r wt_path hash branch_info rest; do
         local dir_name="${wt_path#$FLUTTER_REPO_ROOT/}"
         if [[ "$dir_name" == "$wt_path" && "$wt_path" == "$FLUTTER_REPO_ROOT" ]]; then
@@ -116,18 +116,40 @@ _fswitch_completion() {
         fi
         local branch_name="${branch_info#\[}"
         branch_name="${branch_name%\]}"
-        
+
         targets+=("$dir_name")
         if [ -n "$branch_name" ]; then
             targets+=("$branch_name")
         fi
     done < <(_fswitch_get_worktree_data)
-    
+
     # Deduplicate and generate completion
     local unique_targets=$(echo "${targets[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' ')
     COMPREPLY=( $(compgen -W "${unique_targets}" -- ${cur}) )
 }
 complete -F _fswitch_completion fswitch
+
+fcd() {
+    local flutter_path
+    flutter_path=$(command -v flutter)
+
+    if [[ -z "$flutter_path" ]]; then
+        echo "❌ Flutter command not found. Run 'fswitch <target>' first."
+        return 1
+    fi
+
+    local bin_dir
+    bin_dir=$(dirname "$flutter_path")
+
+    # Check if we are in 'bin' and go up one level
+    if [[ "$(basename "$bin_dir")" == "bin" ]]; then
+        cd "$(dirname "$bin_dir")"
+    else
+        cd "$bin_dir"
+    fi
+}
+
+alias froot=fcd
 
 # Optional: Default to master on load if no flutter is found
 if ! command -v flutter &> /dev/null; then
