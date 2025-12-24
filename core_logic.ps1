@@ -182,10 +182,6 @@ function fswitch {
 }
 
 function fcd {
-    <#
-    .SYNOPSIS
-    Changes the current directory to the root of the active Flutter worktree.
-    #>
     $flutterPath = Get-Command flutter -ErrorAction SilentlyContinue
     if ($null -eq $flutterPath) {
         Write-Error "❌ Flutter command not found. Run 'fswitch <target>' first."
