@@ -10,7 +10,8 @@ else
     _SCRIPT_PATH="$0"
 fi
 
-FLUTTER_REPO_ROOT="$(cd "$(dirname "$_SCRIPT_PATH")" >/dev/null 2>&1 && pwd)"
+# Use pwd -P to resolve symlinks to physical path
+FLUTTER_REPO_ROOT="$(cd "$(dirname "$_SCRIPT_PATH")" >/dev/null 2>&1 && pwd -P)"
 
 _fswitch_get_worktree_data() {
     if command -v git &> /dev/null && [ -d "$FLUTTER_REPO_ROOT" ]; then
@@ -70,12 +71,19 @@ fswitch() {
         return 1
     else
         # Target resolved, check bin
-        local full_bin_path="$FLUTTER_REPO_ROOT/$dir_name/bin"
-        local et_bin_path="$FLUTTER_REPO_ROOT/$dir_name/engine/src/flutter/bin"
+        local full_bin_path
+        local et_bin_path
 
-        if [[ "$dir_name" == "." ]]; then
+        # Handle absolute paths (e.g. symlink resolution mismatches or external worktrees)
+        if [[ "$dir_name" == /* ]]; then
+            full_bin_path="$dir_name/bin"
+            et_bin_path="$dir_name/engine/src/flutter/bin"
+        elif [[ "$dir_name" == "." ]]; then
             full_bin_path="$FLUTTER_REPO_ROOT/bin"
             et_bin_path="$FLUTTER_REPO_ROOT/engine/src/flutter/bin"
+        else
+            full_bin_path="$FLUTTER_REPO_ROOT/$dir_name/bin"
+            et_bin_path="$FLUTTER_REPO_ROOT/$dir_name/engine/src/flutter/bin"
         fi
 
         if [[ ! -d "$full_bin_path" ]]; then
