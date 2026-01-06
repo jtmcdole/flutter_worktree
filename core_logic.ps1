@@ -110,13 +110,7 @@ function fswitch {
     }
 
     # 1. Clean Path
-    if ($IsWindows) {
-        $sepChar = ';'
-    }
-    else {
-        $sepChar = ':'
-    }
-
+    $sepChar = [System.IO.Path]::PathSeparator
     if ($null -ne $env:PATH) {
         $currentPath = $env:PATH.Split($sepChar, [System.StringSplitOptions]::RemoveEmptyEntries)
     }
