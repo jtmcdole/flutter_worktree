@@ -87,6 +87,9 @@ function fswitch {
 
     if ($worktrees) {
         foreach ($wt in $worktrees) {
+            if ($wt.DirName -eq ".bare") {
+                continue
+            }
             if ($Target -eq $wt.DirName -or ($wt.Branch -and $Target -eq $wt.Branch)) {
                 $resolvedWt = $wt
                 break

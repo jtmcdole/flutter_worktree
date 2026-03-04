@@ -34,6 +34,10 @@ _fswitch_resolve() {
             is_root=1
         fi
 
+        if [[ "$rel_path" == ".bare" ]]; then
+            continue
+        fi
+
         local branch_name="${branch_info#\[}"
         branch_name="${branch_name%\]}"
 
